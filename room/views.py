@@ -1,6 +1,6 @@
-from django.shortcuts import render
+from math import floor
+from unicodedata import name
 from rest_framework.views import APIView
-from user.models import User
 from .serializers import RoomSerializer
 from room.models import Room
 from rest_framework.response import Response
@@ -8,11 +8,16 @@ from rest_framework import status
 
 # Create your views here.
 
-
-class Roomview(APIView):
+class RoomView(APIView):
     serializer_class = RoomSerializer
     
-
+    def get(self, request, id=None):
+        user = Room.objects.all()
+        serializer = self.serializer_class(user, many=True)
+        return Response(serializer.data)
+                    
+class RoombookedView(APIView):
+    serializer_class = RoomSerializer
     
     def get(self, request, id=None):
         user = Room.objects.all()
@@ -21,19 +26,13 @@ class Roomview(APIView):
                     
     
     def post(self, request):
-        user = Room.objects.create_user(
-            name = request.data.get('name'),
-            booking_date = request.data.get('booking_date'),
-            room_number = request.data.get('room_number'),
-        )
-        serializer =  RoomSerializer(user)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-    
-
-
+        serializer = self.serializer_class(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+        return Response(serializer.data) 
+        
 class RoomDetailView(APIView):
     serializer_class = RoomSerializer
-     
      
     def get(self, request, id=None):
         room = Room.objects.filter(user__id=id)
@@ -56,3 +55,7 @@ class RoomDetailView(APIView):
        user.delete()
        return Response(({"message": "Room is deleted"}),status=status.HTTP_204_NO_CONTENT)                
              
+
+
+        
+                     
