@@ -1,6 +1,8 @@
 from math import floor
 from unicodedata import name
 from rest_framework.views import APIView
+
+from ..user.utils import admin_required
 from .serializers import RoomSerializer
 from room.models import Room
 from rest_framework.response import Response
