@@ -13,6 +13,9 @@ class User(AbstractBaseUser,PermissionsMixin):
     age = models.PositiveIntegerField(null=True)
     phone_number = PhoneNumberField()
     country_code = models.CharField(max_length=5)
+    is_active = models.BooleanField(default=True)
+    is_staff = models.BooleanField(default=False)
+    admin = models.BooleanField(default=False)
     objects = UserManager()
     
     
