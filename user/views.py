@@ -2,25 +2,24 @@ from rest_framework.views import APIView
 from rest_framework import authentication, permissions
 from rest_framework.response import Response
 from rest_framework import status
+from .utils import admin_required
 from .serializers import UserSerializer
 from .models import User
 from django.contrib.auth import authenticate
 from rest_framework.authtoken.models import Token
-from .utils import admin_required
+
 
  # Create your views here.
 
 class Userview(APIView):
     authentication_classes = [authentication.TokenAuthentication]
-    permissions_classes = [permissions.IsAuthenticated]
+    permissions_classes = [permissions.IsAuthenticated, admin_required]
     serializer_class = UserSerializer
 
-    
     def get(self, request, id=None):
         user = User.objects.get(id=id)
         serializer = self.serializer_class(user, many=True)
         return Response(serializer.data)
-                    
     
     def post(self, request):
         user = User.objects.create_user(
@@ -31,8 +30,6 @@ class Userview(APIView):
         serializer =  UserSerializer(user)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     
-    
-    
     def patch(self, request, id=None):
         try:
             user = User.objects.get(id=id)
@@ -40,9 +37,8 @@ class Userview(APIView):
             if serializer.is_valid():
                 serializer.save()
             return Response(serializer.data)
-        except User.DoesNotExist:
-            return Response(status=status.HTTP_404_NOT_FOUND)
-    
+        except:
+            return Response(serializer.errors, status=status.HTTP_404_NOT_FOUND)
     
     def delete(self, request, id=None):
        user = User.objects.get(id=id)
@@ -63,7 +59,6 @@ class Loginview(APIView):
 class UserDetailsView(APIView):
     serializer_class = UserSerializer
    
-    
     def get(self, request, id=None):
             user = User.objects.all()
             serializer = self.serializer_class(user, many=True)
