@@ -13,8 +13,12 @@ class RoomView(APIView):
     
     def get(self, request, id=None):
         user = Room.objects.all()
+        price = request.GET.get('price', None)
+        if price is not None:
+            user = user.filter(price=price)
         serializer = self.serializer_class(user, many=True)
         return Response(serializer.data)
+                    
                     
 class RoombookedView(APIView):
     serializer_class = RoomSerializer
@@ -34,6 +38,7 @@ class RoombookedView(APIView):
             serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED) 
         
+        
 class RoomDetailView(APIView):
     serializer_class = RoomSerializer
      
@@ -52,12 +57,11 @@ class RoomDetailView(APIView):
         except:
             return Response(serializer.errors, status=status.HTTP_404_NOT_FOUND)
         
-        
     def delete(self, request, id=None):
        user = Room.objects.get(id=id)
        user.delete()
        return Response(({"message": "Room is deleted"}),status=status.HTTP_204_NO_CONTENT)                
-             
+
 
 class HotelView(APIView):
     serializer_class = HotelSerializer
@@ -65,9 +69,11 @@ class HotelView(APIView):
     
     def get(self, request, id=None):
         hotel = Hotel.objects.all()
+        address = request.GET.get('address', None)
+        if address is not None:
+            hotel = hotel.filter(address=address)
         serializer = self.serializer_class(hotel, many=True)
         return Response(serializer.data)
-   
    
     def post(self, request):
         serializer = self.serializer_class(data=request.data)
@@ -89,5 +95,3 @@ class HotelView(APIView):
         hotel = Hotel.objects.get()
         hotel.delete()
         return Response({'message': 'hotel is deleted'}, status=status.HTTP_204_NO_CONTENT)     
-        
-                  

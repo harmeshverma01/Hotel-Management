@@ -1,9 +1,9 @@
+from .serializers import LoginSerializer, UserSerializer
 from rest_framework import authentication, permissions
 from rest_framework.authtoken.models import Token
 from django.contrib.auth import authenticate
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from .serializers import UserSerializer
 from rest_framework import status
 from .utils import admin_required
 from .models import User
@@ -20,8 +20,6 @@ class Userview(APIView):
         serializer = self.serializer_class(user)
         return Response(serializer.data)
     
-   
-    
     def patch(self, request, id=None):
         try:
             user = User.objects.get(id=id)
@@ -37,15 +35,16 @@ class Userview(APIView):
        user.delete()
        return Response(({"message": "User is deleted"}),status=status.HTTP_204_NO_CONTENT) 
     
+    
 class Loginview(APIView):
-    serializer_class = UserSerializer
+    serializer_class = LoginSerializer
     def post(self, request):
         user = authenticate(email=request.data.get('email'), password=request.data.get('password'))
         if user:
             token = Token.objects.get_or_create(user=user)
             return Response({'token': str(token[0])})
         return Response({'details': 'User Not Found'}, status=status.HTTP_404_NOT_FOUND)
-
+     
      
 class UserDetailsView(APIView):
     serializer_class = UserSerializer
@@ -67,5 +66,5 @@ class UserDetailsView(APIView):
     def delete(self, request, id=None):
        user = User.objects.get(id=id)
        user.delete()
-       return Response(({"message": "User is deleted"}),status=status.HTTP_204_NO_CONTENT)        
-     
+       return Response(({"message": "User is deleted"}),status=status.HTTP_204_NO_CONTENT) 
+   
