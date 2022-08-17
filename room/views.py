@@ -12,10 +12,10 @@ class RoomView(APIView):
     permission_classes = [admin_required]
     
     def get(self, request, id=None):
-        user = Room.objects.all()
-        price = request.GET.get('price', None)
-        if price is not None:
-            user = user.filter(price=price)
+        user = Room.objects.filter(price__range = ['1000', '5000'] )
+        # price = request.GET.get('price', None)
+        # if price is not None:
+        #     user = user.filter(price=price)
         serializer = self.serializer_class(user, many=True)
         return Response(serializer.data)
                     
@@ -25,10 +25,7 @@ class RoombookedView(APIView):
     permission_classes = [admin_required]
     
     def get(self, request, id=None):
-        user = Room.objects.all()
-        date = request.GET.get('date', None)
-        if date is not None:
-            user = user.filter(date=date)
+        user = Room.objects.filter(date__range=['2011-01-01', '2011-01-31'])
         serializer = self.serializer_class(user, many=True)
         return Response(serializer.data)
     
@@ -61,6 +58,20 @@ class RoomDetailView(APIView):
        user = Room.objects.get(id=id)
        user.delete()
        return Response(({"message": "Room is deleted"}),status=status.HTTP_204_NO_CONTENT)                
+
+
+
+class RoomAvaiableView(APIView):
+    serializer_class = RoomSerializer
+    
+    def get(self, request, id=None):
+        user = Room.objects.all()
+        date = request.GET.get('date', None)
+        if date is not None:
+            user = user.filter(date=date)
+        serializer = self.serializer_class(user, many=True)
+        return Response(serializer.data)
+
 
 
 class HotelView(APIView):

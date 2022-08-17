@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     'room',
     'phonenumber_field',
     'rest_framework',
+    'django_filters',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

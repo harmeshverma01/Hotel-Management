@@ -1,3 +1,4 @@
+from enum import auto
 from django.db import models
 from user.models import User
 
@@ -10,8 +11,8 @@ class Room(models.Model):
     image = models.ImageField()
     floor = models.IntegerField()
     user = models.ForeignKey(to=User, on_delete=models.CASCADE, related_name='User', null=True)
-    bad_required = models.IntegerField(null=True)
-    date = models.DateTimeField(null=True)
+    bad_count = models.IntegerField(null=True)
+    date = models.DateTimeField(auto_now=False, null=True)
     price = models.FloatField(null=True)
     
     def __str__(self) -> str:
