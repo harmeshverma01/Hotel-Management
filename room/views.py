@@ -9,14 +9,15 @@ from rest_framework import status
 
 class RoomView(APIView):
     serializer_class = RoomSerializer
-    permission_classes = [admin_required]
+    #permission_classes = [admin_required]
     
     def get(self, request, id=None):
-        user = Room.objects.filter(price__range = ['1000', '5000'] )
-        # price = request.GET.get('price', None)
-        # if price is not None:
-        #     user = user.filter(price=price)
-        serializer = self.serializer_class(user, many=True)
+        room = Room.objects.all()
+        start_price = request.GET.get('start_price', None)
+        end_price = request.GET.get('end_price', None)
+        if start_price is not None or end_price is not None:
+            room = room.filter(price__range = [start_price, end_price ])
+        serializer = self.serializer_class(room, many=True)
         return Response(serializer.data)
                     
                     
@@ -25,8 +26,12 @@ class RoombookedView(APIView):
     permission_classes = [admin_required]
     
     def get(self, request, id=None):
-        user = Room.objects.filter(date__range=['2011-01-01', '2011-01-31'])
-        serializer = self.serializer_class(user, many=True)
+        room = Room.objects.all()
+        booking_date = request.GET.get('booking_date', None)
+        checkout_date = request.GET.get('checkout_date', None)
+        if booking_date is not None or checkout_date is not None:
+            room = room.filter(date__range = [booking_date, checkout_date])
+        serializer = self.serializer_class(room , many=True)
         return Response(serializer.data)
     
     def post(self, request):
@@ -58,20 +63,6 @@ class RoomDetailView(APIView):
        user = Room.objects.get(id=id)
        user.delete()
        return Response(({"message": "Room is deleted"}),status=status.HTTP_204_NO_CONTENT)                
-
-
-
-class RoomAvaiableView(APIView):
-    serializer_class = RoomSerializer
-    
-    def get(self, request, id=None):
-        user = Room.objects.all()
-        date = request.GET.get('date', None)
-        if date is not None:
-            user = user.filter(date=date)
-        serializer = self.serializer_class(user, many=True)
-        return Response(serializer.data)
-
 
 
 class HotelView(APIView):
