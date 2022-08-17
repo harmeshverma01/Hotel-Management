@@ -1,13 +1,12 @@
-from rest_framework.views import APIView
+from .serializers import LoginSerializer, UserSerializer
 from rest_framework import authentication, permissions
+from rest_framework.authtoken.models import Token
+from django.contrib.auth import authenticate
 from rest_framework.response import Response
+from rest_framework.views import APIView
 from rest_framework import status
 from .utils import admin_required
-from .serializers import UserSerializer
 from .models import User
-from django.contrib.auth import authenticate
-from rest_framework.authtoken.models import Token
-
 
  # Create your views here.
 
@@ -18,17 +17,8 @@ class Userview(APIView):
 
     def get(self, request, id=None):
         user = User.objects.get(id=id)
-        serializer = self.serializer_class(user, many=True)
+        serializer = self.serializer_class(user)
         return Response(serializer.data)
-    
-    def post(self, request):
-        user = User.objects.create_user(
-            name = request.data.get('name'),
-            email = request.data.get('email'),
-            password = request.data.get('password'),
-        )
-        serializer =  UserSerializer(user)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
     
     def patch(self, request, id=None):
         try:
@@ -47,7 +37,7 @@ class Userview(APIView):
     
     
 class Loginview(APIView):
-    serializer_class = UserSerializer
+    serializer_class = LoginSerializer
     def post(self, request):
         user = authenticate(email=request.data.get('email'), password=request.data.get('password'))
         if user:
@@ -64,18 +54,17 @@ class UserDetailsView(APIView):
             serializer = self.serializer_class(user, many=True)
             return Response(serializer.data)
     
-    def patch(self, request, id=None):
-        try:
-            user = User.objects.get(id=id)
-            serializer = self.serializer_class(user, data=request.data, partial=True)
-            if serializer.is_valid():
-                serializer.save()
-            return Response(serializer.data)
-        except User.DoesNotExist:
-            return Response(status=status.HTTP_404_NOT_FOUND)
+    def post(self, request):
+        user = User.objects.create_user(
+            name = request.data.get('name'),
+            email = request.data.get('email'),
+            password = request.data.get('password'),
+        )
+        serializer =  UserSerializer(user)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
         
     def delete(self, request, id=None):
        user = User.objects.get(id=id)
        user.delete()
-       return Response(({"message": "User is deleted"}),status=status.HTTP_204_NO_CONTENT)        
-     
+       return Response(({"message": "User is deleted"}),status=status.HTTP_204_NO_CONTENT) 
+   

@@ -1,8 +1,8 @@
+from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
+from phonenumber_field.modelfields import PhoneNumberField
+from .manager import UserManager
 from django.db import models
 import uuid
-from phonenumber_field.modelfields import PhoneNumberField
-from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
-from .manager import UserManager
 # Create your models here.
 
 class User(AbstractBaseUser,PermissionsMixin):
@@ -16,7 +16,9 @@ class User(AbstractBaseUser,PermissionsMixin):
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     admin = models.BooleanField(default=False)
+    address = models.CharField(max_length=250, null=True)
     objects = UserManager()
+    
     
     
     USERNAME_FIELD = 'email' 
