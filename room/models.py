@@ -25,3 +25,6 @@ class Hotel(models.Model):
     rating = models.DecimalField(max_digits=5, decimal_places=0)
     review = models.CharField(max_length=200)
     address = models.CharField(max_length=250, null=True)
+    
+    def __str__(self) -> str:
+        return self.name

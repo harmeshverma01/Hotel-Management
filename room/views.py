@@ -1,3 +1,4 @@
+
 from .serializers import HotelSerializer, RoomSerializer
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -9,7 +10,7 @@ from rest_framework import status
 
 class RoomView(APIView):
     serializer_class = RoomSerializer
-    #permission_classes = [admin_required]
+    permission_classes = [admin_required]
     
     def get(self, request, id=None):
         room = Room.objects.all()
@@ -97,3 +98,42 @@ class HotelView(APIView):
         hotel = Hotel.objects.get()
         hotel.delete()
         return Response({'message': 'hotel is deleted'}, status=status.HTTP_204_NO_CONTENT)     
+
+
+# class RaturantView(APIView):
+#     serializer_class = HotelSerializer
+    
+#     def get(self, request, id=None):
+#         Resturant = Hotel.objects.all()
+#         serializer = self.serializer_class(Resturant, many=True)
+#         return Response(serializer.data)
+    
+#     def post(self, request):
+#         resturant = Hotel.objects.create(
+#             name = request.get('name'),
+#             floor = request.get('floor'),
+#             room = request.get('room'),
+#             rating = request.get('rating'),
+#             rewiew = request.get('rewiew'),
+#             address = request.get('address'),
+#         )
+#         resturant.save()
+#         serializer = self.serializer_class()
+#         if serializer.is_valid():
+#             serializer.save()
+#             return Response(serializer.data)
+    
+#     def patch(self, request, id=None):
+#         try:
+#             resturant = Hotel.objects.get(id=id)
+#             serializer = self.serializer_class(resturant, data=request.data, partial=True)
+#             if serializer.is_valid():
+#                 serializer.save()
+#                 return Response(serializer.data, status=status.HTTP_206_PARTIAL_CONTENT)
+#         except:
+#             return Response(serializer.errors, status=status.H)
+        
+#     def delete(self, request, id=None):
+#         returant = Hotel.objects.get(id=id)
+#         returant.delete()
+#         return Response({'message':'Resturant is not avaible'}, status=status.HTTP_404_NOT_FOUND)

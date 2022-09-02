@@ -67,4 +67,3 @@ class UserDetailsView(APIView):
        user = User.objects.get(id=id)
        user.delete()
        return Response(({"message": "User is deleted"}),status=status.HTTP_204_NO_CONTENT) 
-   
